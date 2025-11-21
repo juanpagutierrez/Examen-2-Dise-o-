@@ -1,0 +1,92 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' Nota: Los diagramas están en formato .puml. Para visualizarlos, utilicza el editor web de PlantUML ahí siempre los hice yo (plantuml.com/plantuml).
+' Los archivos contienen el código fuente completo de los diagramas C1, C2 y C3 para ambos ejercicios.
+
+title Motor de Reportes - Diagrama de Componentes (C3)
+
+Container(report_engine, "Motor de Reportes", "Python", "ReportSystem class - Genera contenido de reportes")
+
+System_Boundary(engine_boundary, "Motor de Reportes") {
+    Component(report_coordinator, "Coordinador de Reportes", "Python", "generate_report()\n- Orquesta el flujo completo\n- Valida parámetros de entrada")
+    
+    Component(sales_generator, "Generador de Ventas", "Python", "- Calcula totales de ventas\n- Genera detalle de transacciones\n- Formatea periodo")
+    
+    Component(inventory_generator, "Generador de Inventario", "Python", "- Calcula totales de items\n- Agrupa por categorías\n- Genera stock por producto")
+    
+    Component(financial_generator, "Generador Financiero", "Python", "- Calcula balances\n- Procesa ingresos/gastos\n- Genera métricas financieras")
+    
+    Component(content_formatter, "Formateador de Contenido", "Python", "- Aplica templates de texto\n- Genera headers y separadores\n- Formatea timestamps")
+    
+    Component(history_manager, "Gestor de Historial", "Python", "reports_generated list\n- Registra reportes generados\n- get_report_history()")
+    
+    Component(data_validator, "Validador de Datos", "Python", "- Valida estructura de datos\n- Verifica campos requeridos\n- Valida tipos de datos")
+}
+
+
+Component(format_processor_ext, "Procesador de Formatos", "Python")
+Component(delivery_manager_ext, "Gestor de Entrega", "Python")
+
+
+Rel(report_coordinator, data_validator, "Valida datos de entrada", "method call")
+Rel(data_validator, report_coordinator, "Retorna resultado validación", "boolean")
+
+Rel(report_coordinator, sales_generator, "Genera reporte de ventas", "method call")
+Rel(report_coordinator, inventory_generator, "Genera reporte de inventario", "method call")
+Rel(report_coordinator, financial_generator, "Genera reporte financiero", "method call")
+
+Rel(sales_generator, content_formatter, "Solicita formato de contenido", "method call")
+Rel(inventory_generator, content_formatter, "Solicita formato de contenido", "method call")
+Rel(financial_generator, content_formatter, "Solicita formato de contenido", "method call")
+
+Rel(content_formatter, report_coordinator, "Retorna contenido formateado", "string")
+
+Rel(report_coordinator, history_manager, "Registra reporte en historial", "list.append()")
+Rel(report_coordinator, format_processor_ext, "Envía contenido para formateo final", "content data")
+Rel(report_coordinator, delivery_manager_ext, "Solicita distribución del reporte", "delivery request")
+
+' Notas detalladas
+Note right of sales_generator
+    Procesa:
+    - Total de ventas
+    - Número de transacciones
+    - Detalle por producto
+    - Periodo reportado
+end note
+
+Note left of inventory_generator
+    Procesa:
+    - Total de items
+    - Categorías únicas
+    - Stock por producto
+    - Agrupamiento
+end note
+
+Note right of financial_generator
+    Procesa:
+    - Ingresos totales
+    - Gastos totales
+    - Balance neto
+    - Métricas clave
+end note
+
+Note left of content_formatter
+    Funciones:
+    - Headers con "="
+    - Timestamps
+    - Separadores "-"
+    - Listas con "•"
+    - Alineación texto
+end note
+
+Note bottom of history_manager
+    Datos almacenados:
+    - type (sales/inventory/financial)
+    - format (pdf/excel/html)
+    - delivery (email/download/cloud)
+    - timestamp
+    - content_size
+end note
+
+@enduml

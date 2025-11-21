@@ -1,0 +1,30 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' Nota: Los diagramas están en formato .puml. Para visualizarlos, utilicza el editor web de PlantUML ahí siempre los hice yo (plantuml.com/plantuml).
+' Los archivos contienen el código fuente completo de los diagramas C1, C2 y C3 para ambos ejercicios.
+
+title Sistema de Notificaciones de Pedidos - Diagrama de Contenedores (C2)
+
+Person(customer, "Cliente", "Realiza pedidos y recibe notificaciones")
+
+System_Boundary(order_system, "Sistema de Tienda Online") {
+    Container(web_app, "Aplicación Web", "Python", "Procesa pedidos y gestiona notificaciones")
+    Container(notification_engine, "Motor de Notificaciones", "OrderNotificationSystem", "Coordina el envío de notificaciones")
+}
+
+System_Ext(email_service, "Servicio de Email", "API externa de envío de emails")
+System_Ext(sms_gateway, "Gateway SMS", "Proveedor de servicios SMS")
+System_Ext(push_service, "Servicio Push", "Servicio de notificaciones push")
+
+Rel(customer, web_app, "Realiza pedidos", "HTTP/HTTPS")
+Rel(web_app, notification_engine, "Envía datos del pedido", "LLamada a método")
+Rel(notification_engine, customer, "Envía confirmaciones", "Múltiples canales")
+
+Rel(notification_engine, email_service, "Envía emails", "SMTP/API")
+Rel(notification_engine, sms_gateway, "Envía SMS", "API REST")
+Rel(notification_engine, push_service, "Envía notificaciones", "WebSocket/API")
+
+Rel(notification_engine, notification_engine, "Registra en historial", "Lista interna")
+
+@enduml

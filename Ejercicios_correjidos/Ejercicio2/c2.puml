@@ -1,0 +1,70 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' Nota: Los diagramas están en formato .puml. Para visualizarlos, utilicza el editor web de PlantUML ahí siempre los hice yo (plantuml.com/plantuml).
+' Los archivos contienen el código fuente completo de los diagramas C1, C2 y C3 para ambos ejercicios.
+
+title Sistema Gestor de Documentos - Diagrama de Contenedores (C2)
+
+Person(usuario, "Usuario del Sistema", "Genera reportes y recibe documentos")
+Person(administrador, "Administrador del Sistema", "Configura y monitorea el sistema")
+
+System_Boundary(report_system, "Sistema Gestor de Documentos") {
+    Container(web_interface, "Interfaz Web", "Python/Flask", "Interfaz para solicitar reportes y configuraciones")
+    
+    Container(report_engine, "Motor de Reportes", "Python", "ReportSystem class\n- Genera contenido de reportes\n- Gestiona formatos de salida")
+    
+    Container(format_processor, "Procesador de Formatos", "Python", "Convierte reportes a PDF, Excel, HTML")
+    
+    Container(delivery_manager, "Gestor de Entrega", "Python", "Coordina métodos de distribución\nde reportes")
+    
+    Container(history_db, "Base de Datos de Historial", "JSON/Archivo", "Almacena registro de reportes\ngenerados")
+}
+
+System_Ext(email_service, "Servicio de Email", "SMTP/API de correo")
+System_Ext(cloud_storage, "Almacenamiento en la Nube", "API REST Cloud")
+System_Ext(download_service, "Servicio de Descargas", "HTTP File Server")
+
+
+Rel(usuario, web_interface, "Solicita reportes\nConfigura parámetros", "HTTP/HTTPS")
+Rel(administrador, web_interface, "Configura sistema\nConsulta historial", "HTTP/HTTPS")
+
+
+Rel(web_interface, report_engine, "Envía solicitud de reporte", "API Call")
+Rel(report_engine, format_processor, "Envía contenido para formateo", "Method Call")
+Rel(report_engine, delivery_manager, "Solicita distribución", "Method Call")
+Rel(report_engine, history_db, "Registra reporte generado", "JSON Write")
+
+Rel(format_processor, delivery_manager, "Provee reporte formateado", "Data Object")
+Rel(delivery_manager, history_db, "Actualiza estado de entrega", "JSON Update")
+
+
+Rel(delivery_manager, email_service, "Envía reporte por email", "SMTP/API")
+Rel(delivery_manager, cloud_storage, "Sube reporte a la nube", "API REST")
+Rel(delivery_manager, download_service, "Prepara descarga", "File Upload")
+
+Rel(web_interface, history_db, "Consulta historial de reportes", "JSON Read")
+
+
+Note left of report_engine
+    Tipos de reporte:
+    - Ventas
+    - Inventario
+    - Financiero
+end note
+
+Note right of format_processor
+    Formatos soportados:
+    - PDF
+    - Excel
+    - HTML
+end note
+
+Note right of delivery_manager
+    Métodos de entrega:
+    - Email
+    - Descarga
+    - Cloud
+end note
+
+@enduml

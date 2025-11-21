@@ -1,0 +1,58 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' Nota: Los diagramas están en formato .puml. Para visualizarlos, utilicza el editor web de PlantUML ahí siempre los hice yo (plantuml.com/plantuml).
+' Los archivos contienen el código fuente completo de los diagramas C1, C2 y C3 para ambos ejercicios.
+
+title Motor de Notificaciones - Diagrama de Componentes (C3)
+
+Container(notification_engine, "Motor de Notificaciones", "Python", "OrderNotificationSystem - Coordina el envío de notificaciones")
+
+System_Boundary(notification_boundary, "Sistema de Notificaciones") {
+    Component(order_processor, "Procesador de Pedidos", "Python", "process_order()\n- Valida datos del pedido\n- Coordina flujo de notificaciones")
+    
+    Component(email_handler, "Manejador de Email", "Python", "- Formatea mensajes de email\n- Gesta envío por correo")
+    Component(sms_handler, "Manejador de SMS", "Python", "- Formatea mensajes SMS\n- Gesta envío por SMS")
+    Component(push_handler, "Manejador de Push", "Python", "- Formatea notificaciones push\n- Gesta envío push")
+    
+    Component(notification_history, "Historial de Notificaciones", "Python", "notifications_sent list\n- Almacena historial\n- get_notification_history()")
+    
+    Component(message_formatter, "Formateador de Mensajes", "Python", "- Genera templates de mensajes\n- Personaliza contenido")
+}
+
+System_Ext(email_service, "Servicio de Email", "API externa de envío de emails")
+System_Ext(sms_gateway, "Gateway SMS", "Proveedor de servicios SMS")
+System_Ext(push_service, "Servicio Push", "Servicio de notificaciones push")
+
+
+Rel(order_processor, email_handler, "Envía datos para email", "method call")
+Rel(order_processor, sms_handler, "Envía datos para SMS", "method call") 
+Rel(order_processor, push_handler, "Envía datos para push", "method call")
+
+Rel(order_processor, notification_history, "Registra notificación", "list.append()")
+Rel(order_processor, message_formatter, "Solicita formato de mensaje", "method call")
+
+Rel(email_handler, message_formatter, "Obtiene mensaje formateado", "method call")
+Rel(sms_handler, message_formatter, "Obtiene mensaje formateado", "method call")
+Rel(push_handler, message_formatter, "Obtiene mensaje formateado", "method call")
+
+Rel(email_handler, notification_history, "Registra email enviado", "list.append()")
+Rel(sms_handler, notification_history, "Registra SMS enviado", "list.append()")
+Rel(push_handler, notification_history, "Registra push enviado", "list.append()")
+
+
+Rel(email_handler, email_service, "Envía email", "SMTP/API")
+Rel(sms_handler, sms_gateway, "Envía SMS", "API REST")
+Rel(push_handler, push_service, "Envía notificación", "WebSocket/API")
+
+
+Note right of notification_history
+    Almacena:
+    - type (email/sms/push)
+    - destinatario
+    - mensaje
+    - timestamp
+    - order_id
+end note
+
+@enduml

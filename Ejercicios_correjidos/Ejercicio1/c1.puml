@@ -1,0 +1,25 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+' Nota: Los diagramas están en formato .puml. Para visualizarlos, utilicza el editor web de PlantUML ahí siempre los hice yo (plantuml.com/plantuml).
+' Los archivos contienen el código fuente completo de los diagramas C1, C2 y C3 para ambos ejercicios.
+
+title Sistema de Notificaciones de Pedidos - Diagrama de Contexto (C1)
+
+Person(customer, "Cliente", "Realiza pedidos y recibe notificaciones")
+
+System(order_notification_system, "Sistema de Notificaciones de Pedidos", \
+"Procesa pedidos y envía notificaciones por diferentes canales")
+
+System_Ext(email_system, "Sistema de Email", "Servicio externo de envío de correos electrónicos")
+System_Ext(sms_system, "Sistema de SMS", "Servicio externo de envío de mensajes SMS")
+System_Ext(push_system, "Sistema de Push", "Servicio externo de notificaciones push")
+
+Rel(customer, order_notification_system, "Realiza pedidos")
+Rel(order_notification_system, customer, "Envía confirmaciones de pedido")
+
+Rel(order_notification_system, email_system, "Envía emails de confirmación")
+Rel(order_notification_system, sms_system, "Envía SMS de confirmación") 
+Rel(order_notification_system, push_system, "Envía notificaciones push")
+
+@enduml

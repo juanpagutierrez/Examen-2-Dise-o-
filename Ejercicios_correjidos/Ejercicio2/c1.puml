@@ -1,0 +1,49 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+' Nota: Los diagramas están en formato .puml. Para visualizarlos, utilicza el editor web de PlantUML ahí siempre los hice yo (plantuml.com/plantuml).
+' Los archivos contienen el código fuente completo de los diagramas C1, C2 y C3 para ambos ejercicios.
+
+title Sistema Gestor de Documentos - Diagrama de Contexto (C1)
+
+Person(usuario, "Usuario del Sistema", \
+"Genera reportes y recibe documentos\n(gerentes, analistas, administradores)")
+
+Person(administrador, "Administrador del Sistema", \
+"Configura y monitorea el sistema de reportes")
+
+System(report_system, "Sistema Gestor de Documentos", \
+"Genera, formatea y distribuye reportes empresariales")
+
+System_Ext(email_service, "Servicio de Email", \
+"Sistema corporativo de correo electrónico")
+
+System_Ext(cloud_storage, "Almacenamiento en la Nube", \
+"Plataforma cloud para almacenar documentos")
+
+System_Ext(download_service, "Servicio de Descargas", \
+"Sistema de descarga de archivos")
+
+
+Rel(usuario, report_system, "Solicita generación de reportes\nTipos: Ventas, Inventario, Financiero")
+Rel(usuario, report_system, "Recibe reportes generados")
+
+Rel(administrador, report_system, "Configura formatos y métodos de entrega\nMonitorea historial de reportes")
+
+Rel(report_system, usuario, "Entrega reportes generados\nFormatos: PDF, Excel, HTML")
+
+
+Rel(report_system, email_service, "Envía reportes por correo electrónico")
+Rel(report_system, cloud_storage, "Almacena reportes en la nube")
+Rel(report_system, download_service, "Provee descarga directa de reportes")
+
+
+Note right of report_system
+    Capacidades:
+    - Generación de reportes
+    - Formateo de documentos
+    - Distribución automática
+    - Historial de generación
+end note
+
+@enduml
